@@ -1,74 +1,74 @@
-#inicialización y creación de matrices.
-import random;
+import random
+import time
 
-#TABLERO
-#tamaño del tablero
-tamaño = 3
-tableroVisible = []
-tableroOculto = []
-
-#tablero visible
-for i in range(tamaño):
-    fila = []
-    for j in range(tamaño):
-        fila.append("🌊")
-    tableroVisible.append(fila)
-
-
-#tablero no visible
-for i in range(tamaño):
-    fila = []
-    for j in range(tamaño):
-        fila.append("🌊")
-    tableroOculto.append(fila)
-
-
-#BARCOS
-barcos = 3
-barcosEnMapa = 0
-
-while barcosEnMapa < barcos:
-    filas = random.randint(0, tamaño-1)
-    columnas = random.randint(0, tamaño-1)
-
-    #si la casilla esta vacia (es agua) ponemos barco
-    if tableroOculto[filas][columnas] == "🌊":
-        tableroOculto[filas][columnas] = "🚢"
-        barcosEnMapa += 1
-    
-
-barcosHundidos = 0
-disparos = 0
-
-while barcosHundidos < barcos:
-    print("0  1  2  3  4")
-
+#basico
+def crearTablero(tamaño):
+    tablero = []
     for i in range(tamaño):
-        fila_texto = " ".join(tableroVisible[i])
-        print(f"{i} {fila_texto}")
+        fila = []
+        for j in range(tamaño):
+            fila.append("🌊")
+        tablero.append(fila)
+    return tablero
 
-    try:
-        filas = int(input(f"\nFila (0-{tamaño-1}):"))
-        columnas = int(input(f"\nColumna (0-{tamaño-1}):"))
+def imprimirTablero(tablero, tamaño, nombre):
+    print(f"Tablero de {nombre}")
+    print("0 1 2 3 4 5 6 7")
+    for i in range(tamaño):
+        fila_texto = " ".join(tablero[i])
+        print(f"{i}  {fila_texto}")
 
-        if(filas < 0 or filas >= tamaño or columnas < 0 or columnas >= tamaño):
-            print("Esa coordenada no existe")
-            continue
-        if tableroVisible[filas][columnas] != "🌊":
-            print("Ya disparaste ahí.")
-            continue
-    except ValueError:
-        print("Por favor, escribe un número.")
-        continue
+def colocarBarcos(tablero, cantidad, tamaño):
+    barcosEnMapa = 0
 
+    while barcosEnMapa < cantidad:
+        filas = random.randint(0, tamaño-1)
+        columnas = random.randint(0, tamaño-1)
+        if tablero[filas][columnas] == "🌊":
+            tablero[filas][columnas] = "🚢"
+            barcosEnMapa += 1
+
+#TURNOS
+
+def disparos(filas, columnas, tableroOculto, tableroVisible):
     if tableroOculto[filas][columnas] == "🚢":
-        print("¡TOCADO Y HUNDIDO!") 
+        print("TOCADO Y HUNDIDO")
         tableroVisible[filas][columnas] = "🔥"
-        barcosHundidos += 1
-        disparos += 1
+        return True
     else:
-        print("💧 Agua...") 
+        print("💧 Agua...")
         tableroVisible[filas][columnas] = "💧"
-        disparos += 1
+        return False
 
-print(f"\n ¡Felicidades! Has hundido toda la flota en {disparos} disparos.")
+def turnoJugador(tableroOculto, tableroVisible, tamaño, nombre):
+    while True:
+        while True:
+            try:
+                print(f"\nTurno de {nombre}")
+                filas = int(input(f"Fila (0-{tamaño-1}): "))
+                columnas = int(input(f"Columna (0-{tamaño-1}): "))
+                
+                if filas < 0 or filas >= tamaño or columnas < 0 or columnas >= tamaño:
+                    print("Coordenada fuera de rango.")
+                    continue
+                if tableroVisible[filas][columnas] != "🌊":
+                    print("Ya disparaste ahí.")
+                    continue
+                
+                return disparos(filas, columnas, tableroOculto, tableroVisible)
+            except ValueError:
+                print("Error: Escribe números enteros.")
+
+
+def turnoMaquina(tableroOCulto, tableroVisible, tamaño):
+
+    while True:
+        filas = random.randint(0, tamaño - 1)
+        columnas = random.randint(0, tamaño - 1)
+        if tableroVisible[filas][columnas] == "🌊":
+            print(f"\nLa Máquina dispara a ({f}, {c})...")
+            time.sleep(1) 
+            # return disparos(filas, columnas, tableroOculto, tableroVisible)
+        
+
+# MODOS DE JUEGO 
